@@ -107,6 +107,8 @@ public class KakaoTalk extends CordovaPlugin {
 				@Override
 				public void run() {
 					try {
+						Log.v(LOG_TAG, parameters.getString("like"));
+						Log.v(LOG_TAG, parameters.getString("comment"));
 						FeedTemplate params = FeedTemplate
 							.newBuilder(ContentObject.newBuilder(parameters.getString("store"),
 							parameters.getString("image"),
