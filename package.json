@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Cordova KakaoTalk Plugin",
   "cordova": {
-    "id": "cordova-plugin-htj-kakaotalk",
+    "id": "cordova-plugin-hansol-kakaotalk",
     "platforms": [
       "android",
       "ios"
