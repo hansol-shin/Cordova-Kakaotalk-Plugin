@@ -96,6 +96,14 @@ public class KakaoTalk extends CordovaPlugin {
 		return false;
 	}
 
+	/**
+	 * ResponseCallback
+	 */
+	public interface ResponseCallback {
+		public void onFailure(ErrorResult e);
+		public void onSuccess(KakaoLinkResponse result);
+	}
+
 	private void share(JSONArray options, final CallbackContext callbackContext) throws KakaoParameterException {
 
 		try {
@@ -117,7 +125,7 @@ public class KakaoTalk extends CordovaPlugin {
 						.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
 						.build();
 
-					KakaoLinkService.getInstance().sendDefault(this, params, new ResponseCallback<KakaoLinkResponse>() {
+					KakaoLinkService.getInstance().sendDefault(this, params, new ResponseCallback() {
 						@Override
 						public void onFailure(ErrorResult e) {
 							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
