@@ -272,30 +272,29 @@ public class KakaoTalk extends CordovaPlugin {
 
 		@Override
 		public void onSessionOpened() {
-			// Log.v(LOG_TAG, "kakao : SessionCallback.onSessionOpened");
-			// UserManagement.requestMe(new MeResponseCallback() {
-			// 	@Override
-			// 	public void onFailure(ErrorResult errorResult) {
-			// 		callbackContext.error("kakao : SessionCallback.onSessionOpened.requestMe.onFailure - " + errorResult);
-			// 	}
+			Log.v(LOG_TAG, "kakao : SessionCallback.onSessionOpened");
+			UserManagement.requestMe(new MeResponseCallback() {
+				@Override
+				public void onFailure(ErrorResult errorResult) {
+					callbackContext.error("kakao : SessionCallback.onSessionOpened.requestMe.onFailure - " + errorResult);
+				}
 
-			// 	@Override
-			// 	public void onSessionClosed(ErrorResult errorResult) {
-			// 		Log.v(LOG_TAG, "kakao : SessionCallback.onSessionOpened.requestMe.onSessionClosed - " + errorResult);
-			// 		Session.getCurrentSession().checkAndImplicitOpen();
-			// 	}
+				@Override
+				public void onSessionClosed(ErrorResult errorResult) {
+					Log.v(LOG_TAG, "kakao : SessionCallback.onSessionOpened.requestMe.onSessionClosed - " + errorResult);
+					Session.getCurrentSession().checkAndImplicitOpen();
+				}
 
-			// 	@Override
-			// 	public void onSuccess(UserProfile userProfile) {
-			// 		callbackContext.success(handleResult(userProfile));
-			// 	}
+				@Override
+				public void onSuccess(UserProfile userProfile) {
+					callbackContext.success(handleResult(userProfile));
+				}
 
-			// 	@Override
-			// 	public void onNotSignedUp() {
-			// 		callbackContext.error("this user is not signed up");
-			// 	}
-			// });
-			redirectSignupActivity();
+				@Override
+				public void onNotSignedUp() {
+					callbackContext.error("this user is not signed up");
+				}
+			});
 		}
 
 		@Override
@@ -305,11 +304,6 @@ public class KakaoTalk extends CordovaPlugin {
 			}
 		}
 	}
-
-	protected void redirectSignupActivity() {
-        final Intent intent = new Intent(this, SampleSignupActivity.class);
-        currentActivity.startActivity(intent);
-    }
 
 
 	/**
@@ -338,7 +332,7 @@ public class KakaoTalk extends CordovaPlugin {
 			return new ISessionConfig() {
 				@Override
 				public AuthType[] getAuthTypes() {
-					return new AuthType[] {AuthType.KAKAO_TALK_ALL};
+					return new AuthType[] {AuthType.KAKAO_LOGIN_ALL};
 				}
 
 				@Override
