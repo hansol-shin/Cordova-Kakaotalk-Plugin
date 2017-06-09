@@ -116,8 +116,8 @@ public class KakaoTalk extends CordovaPlugin {
 									.setMobileWebUrl("http://point.pohang.go.kr").build())
 							.setDescrption(parameters.getString("text"))
 							.build())
-							.setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
-									.build())
+							// .setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
+							// 		.build())
 							.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
 							.build();
 
