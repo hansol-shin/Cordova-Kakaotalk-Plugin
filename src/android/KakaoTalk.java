@@ -13,10 +13,16 @@ import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 import com.kakao.auth.Session;
-import com.kakao.kakaolink.AppActionBuilder;
-import com.kakao.kakaolink.AppActionInfoBuilder;
-import com.kakao.kakaolink.KakaoLink;
-import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+
+import com.kakao.kakaolink.v2.KakaoLinkService;
+import com.kakao.kakaolink.v2.KakaoLinkResponse;
+
+import com.kakao.message.template.FeedTemplate;
+import com.kakao.message.template.ContentObject;
+import com.kakao.message.template.LinkObject;
+import com.kakao.message.template.SocialObject;
+import com.kakao.message.template.ButtonObject;
+
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
@@ -96,100 +102,40 @@ public class KakaoTalk extends CordovaPlugin {
 			final JSONObject parameters = options.getJSONObject(0);
 
 			final Activity activity = this.cordova.getActivity();
-			final KakaoLink kakaoLink = KakaoLink.getKakaoLink(activity);
-			final KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
 			cordova.getThreadPool().execute(new Runnable() {
 				@Override
 				public void run() {
-						try {
-							if (parameters.has("text")) {
-								kakaoTalkLinkMessageBuilder.addText(parameters.getString("text"));
-							}
-							if (parameters.has("image")) {
-								JSONObject imageObj =  parameters.getJSONObject("image");
-								Integer imageWidth = 200;
-								Integer imageHeight = 200;
-								if(imageObj.has("width") && Integer.parseInt(imageObj.getString("width")) > 80){
-									imageWidth =  Integer.parseInt(imageObj.getString("width"));
-								};
-								if(imageObj.has("height") &&  Integer.parseInt(imageObj.getString("height")) > 80){
-									imageHeight =  Integer.parseInt(imageObj.getString("height"));
-								};
-								kakaoTalkLinkMessageBuilder.addImage(imageObj.getString("src"), imageWidth, imageHeight);
-								Log.v(LOG_TAG, "Image URL: " + imageObj.getString("src"));
-							}
-							if (parameters.has("weblink")) {
-								JSONObject weblinkObj =  parameters.getJSONObject("weblink");
-								if(weblinkObj.has("text") && weblinkObj.has("url")){
-									kakaoTalkLinkMessageBuilder.addWebLink(weblinkObj.getString("text"), weblinkObj.getString("url"));
-								}
-							}
-							if (parameters.has("applink")) {
-								JSONObject applinkObj =  parameters.getJSONObject("applink");
-								if(applinkObj.has("text") && applinkObj.has("url")) {
-									String applinkParam = "";
-									if (parameters.has("params")) {
-										JSONObject paramsObj = parameters.getJSONObject("params");
-										Log.v(LOG_TAG, "paramsObj : " + paramsObj);
-										Iterator keys = paramsObj.keys();
-										int i = 0;
-										while (keys.hasNext()) {
-											String key = keys.next().toString();
-											String paramValue = paramsObj.getString(key);
-											Log.v(LOG_TAG, "key : " + key);
-											Log.v(LOG_TAG, "paramValue : " + paramValue);
-											if (paramValue != "") {
-												i++;
-												if (i > 1) {
-													key = "&" + key;
-												}
-												applinkParam = applinkParam + key + "=" + paramValue;
-											}
-										}
-										;
-									}
-									Log.v(LOG_TAG, "applinkParam : " + applinkParam);
-									kakaoTalkLinkMessageBuilder.addAppButton(applinkObj.getString("text"),
-											new AppActionBuilder()
-													.addActionInfo(AppActionInfoBuilder
-															.createAndroidActionInfoBuilder()
-															.setExecuteParam(applinkParam)
-															.setMarketParam("referrer=kakaotalklink")
-															.build())
-													.addActionInfo(AppActionInfoBuilder
-															.createiOSActionInfoBuilder()
-															.setExecuteParam(applinkParam)
-															.build())
-													.setUrl(applinkObj.getString("url"))
-													.build());
-								}
-							};
-							kakaoTalkLinkMessageBuilder.build();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					FeedTemplate params = FeedTemplate
+						.newBuilder(ContentObject.newBuilder(parameters.getString("store"),
+						parameters.getString("image"),
+						LinkObject.newBuilder().setWebUrl("http://point.pohang.go.kr")
+								.setMobileWebUrl("http://point.pohang.go.kr").build())
+						.setDescrption(parameters.getString("text"))
+						.build())
+						.setSocial(SocialObject.newBuilder().setLikeCount(parameters.getString("like")).setCommentCount(parameters.getString("comment"))
+								.build())
+						.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
+						.build();
+
+					KakaoLinkService.getInstance().sendDefault(this, params, new ResponseCallback<KakaoLinkResponse>() {
+						@Override
+						public void onFailure(ErrorResult e) {
 							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
 							callbackContext.error("Exception error : " + e);
 						}
 
-						try {
-							kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, activity);
+						@Override
+						public void onSuccess(KakaoLinkResponse result) {
 							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "success"));
 							callbackContext.success("success");
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
-							callbackContext.error("Exception error : " + e);
 						}
+					});
 				}
 			});
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
 	}
 
 	/**
@@ -361,10 +307,10 @@ public class KakaoTalk extends CordovaPlugin {
 		@Override
 		public IApplicationConfig getApplicationConfig() {
 			return new IApplicationConfig() {
-				@Override
-				public Activity getTopActivity() {
-					return KakaoTalk.getCurrentActivity();
-				}
+				// @Override
+				// public Activity getTopActivity() {
+				// 	return KakaoTalk.getCurrentActivity();
+				// }
 
 				@Override
 				public Context getApplicationContext() {
