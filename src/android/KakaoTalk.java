@@ -112,8 +112,8 @@ public class KakaoTalk extends CordovaPlugin {
 						FeedTemplate params = FeedTemplate
 							.newBuilder(ContentObject.newBuilder(parameters.getString("store"),
 							parameters.getString("image"),
-							LinkObject.newBuilder().setWebUrl("http://point.pohang.go.kr")
-									.setMobileWebUrl("http://point.pohang.go.kr").build())
+							LinkObject.newBuilder().setWebUrl("http://point.pohang.go.kr/")
+									.setMobileWebUrl("http://point.pohang.go.kr/").build())
 							.setDescrption(parameters.getString("text"))
 							.build())
 							// .setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
