@@ -107,8 +107,8 @@ public class KakaoTalk extends CordovaPlugin {
 							}
 							if (parameters.has("image")) {
 								JSONObject imageObj =  parameters.getJSONObject("image");
-								Integer imageWidth = 80;
-								Integer imageHeight = 80;
+								Integer imageWidth = 200;
+								Integer imageHeight = 200;
 								if(imageObj.has("width") && Integer.parseInt(imageObj.getString("width")) > 80){
 									imageWidth =  Integer.parseInt(imageObj.getString("width"));
 								};
@@ -116,6 +116,7 @@ public class KakaoTalk extends CordovaPlugin {
 									imageHeight =  Integer.parseInt(imageObj.getString("height"));
 								};
 								kakaoTalkLinkMessageBuilder.addImage(imageObj.getString("src"), imageWidth, imageHeight);
+								Log.v(LOG_TAG, "Image URL: " + imageObj.getString("src"));
 							}
 							if (parameters.has("weblink")) {
 								JSONObject weblinkObj =  parameters.getJSONObject("weblink");
@@ -360,10 +361,10 @@ public class KakaoTalk extends CordovaPlugin {
 		@Override
 		public IApplicationConfig getApplicationConfig() {
 			return new IApplicationConfig() {
-				// @Override
-				// public Activity getTopActivity() {
-				// 	return KakaoTalk.getCurrentActivity();
-				// }
+				@Override
+				public Activity getTopActivity() {
+					return KakaoTalk.getCurrentActivity();
+				}
 
 				@Override
 				public Context getApplicationContext() {
