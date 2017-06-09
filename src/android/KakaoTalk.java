@@ -24,6 +24,7 @@ import com.kakao.message.template.SocialObject;
 import com.kakao.message.template.ButtonObject;
 
 import com.kakao.network.ErrorResult;
+import com.kakao.network.callback.ResponseCallback;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.usermgmt.callback.MeResponseCallback;
@@ -96,14 +97,6 @@ public class KakaoTalk extends CordovaPlugin {
 		return false;
 	}
 
-	/**
-	 * ResponseCallback
-	 */
-	public interface ResponseCallback {
-		public void onFailure(ErrorResult e);
-		public void onSuccess(KakaoLinkResponse result);
-	}
-
 	private void share(JSONArray options, final CallbackContext callbackContext) throws KakaoParameterException {
 
 		try {
@@ -120,12 +113,12 @@ public class KakaoTalk extends CordovaPlugin {
 								.setMobileWebUrl("http://point.pohang.go.kr").build())
 						.setDescrption(parameters.getString("text"))
 						.build())
-						.setSocial(SocialObject.newBuilder().setLikeCount(parameters.getString("like")).setCommentCount(parameters.getString("comment"))
+						.setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
 								.build())
 						.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
 						.build();
 
-					KakaoLinkService.getInstance().sendDefault(this, params, new ResponseCallback() {
+					KakaoLinkService.getInstance().sendDefault(this, params, new ResponseCallback<KakaoLinkResponse>() {
 						@Override
 						public void onFailure(ErrorResult e) {
 							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
