@@ -106,31 +106,37 @@ public class KakaoTalk extends CordovaPlugin {
 			cordova.getThreadPool().execute(new Runnable() {
 				@Override
 				public void run() {
-					FeedTemplate params = FeedTemplate
-						.newBuilder(ContentObject.newBuilder(parameters.getString("store"),
-						parameters.getString("image"),
-						LinkObject.newBuilder().setWebUrl("http://point.pohang.go.kr")
-								.setMobileWebUrl("http://point.pohang.go.kr").build())
-						.setDescrption(parameters.getString("text"))
-						.build())
-						.setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
-								.build())
-						.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
-						.build();
+					try {
+						FeedTemplate params = FeedTemplate
+							.newBuilder(ContentObject.newBuilder(parameters.getString("store"),
+							parameters.getString("image"),
+							LinkObject.newBuilder().setWebUrl("http://point.pohang.go.kr")
+									.setMobileWebUrl("http://point.pohang.go.kr").build())
+							.setDescrption(parameters.getString("text"))
+							.build())
+							.setSocial(SocialObject.newBuilder().setLikeCount(Integer.parseInt(parameters.getString("like"))).setCommentCount(Integer.parseInt(parameters.getString("comment")))
+									.build())
+							.addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("http://sarang.pohang.go.kr").setMobileWebUrl("http://sarang.pohang.go.kr/mobile/").build()))
+							.build();
 
-					KakaoLinkService.getInstance().sendDefault(activity, params, new ResponseCallback<KakaoLinkResponse>() {
-						@Override
-						public void onFailure(ErrorResult e) {
-							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
-							callbackContext.error("Exception error : " + e);
-						}
+						KakaoLinkService.getInstance().sendDefault(activity, params, new ResponseCallback<KakaoLinkResponse>() {
+							@Override
+							public void onFailure(ErrorResult e) {
+								callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
+								callbackContext.error("Exception error : " + e);
+							}
 
-						@Override
-						public void onSuccess(KakaoLinkResponse result) {
-							callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "success"));
-							callbackContext.success("success");
-						}
-					});
+							@Override
+							public void onSuccess(KakaoLinkResponse result) {
+								callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "success"));
+								callbackContext.success("success");
+							}
+						});
+					} catch (Exception e) {
+						callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "Exception error : " + e));
+						callbackContext.error("Exception error : " + e);
+					}
+					
 				}
 			});
 		} catch (Exception e) {
